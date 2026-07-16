@@ -608,5 +608,5 @@ window.onkeydown = (e) => {
         if(k === "ArrowLeft" && px > 0) px--;
         if(k === "ArrowRight" && px < 2) px++;
     }
-};
+
 };
