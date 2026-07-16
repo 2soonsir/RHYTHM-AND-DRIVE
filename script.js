@@ -25,7 +25,7 @@ let currentMapKey = 'cybercity', running = false, lastTime = 0, moveTimer = 0, p
 let obs = [], gems = [], items = [], isInvulnerable = false, nitroActive = false, nitroEnergy = 0, isDev = false, gameLevel = 1;
 
 // --- MULTIPLAYER LOGIC ---
-// --- MULTIPLAYER LOGIC ---
+
 let isMultiplayer = false;
 let p2x = 1, p2y = 4, p2Lives = 0, p2Cash = 0, p2Invul = false;
 let p2NitroActive = false;
