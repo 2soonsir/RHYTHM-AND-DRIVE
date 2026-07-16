@@ -560,24 +560,7 @@ document.addEventListener('touchend', (e) => {
     if (diff > 30 && px < 2) px++;
 }, { passive: true });
 
-window.onkeydown = (e) => {
-    if(e.key === "Escape") { togglePause(); return; }
-    if(!running || isPaused) return;
-    const k = e.key.toLowerCase();
-    // P1 Controls
-    if(k === "a" && px > 0) px--;
-    if(k === "d" && px < 2) px++;
-    if(k === " " && nitroEnergy >= 30) nitroActive = true;
-    // P2 Controls
-    if(isMultiplayer) {
-        if(e.key === "ArrowLeft" && p2x > 0) p2x--;
-        if(e.key === "ArrowRight" && p2x < 2) p2x++;
-        
-    if(e.key === "Enter" && p2NitroEnergy >= 30) {
-        p2NitroActive = true;
-    }
-}
-    
+
 // ... (SEMUA KOD ASAL KAU DARI ATAS SAMPAI GAME OVER TETAP SAMA)
 
 // --- TOUCH & KEYBOARD INPUTS (DIBERSIHKAN IKUT RULE KAU) ---
