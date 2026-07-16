@@ -437,7 +437,7 @@ if(p2NitroActive) {
             setTimeout(() => isInvulnerable = false, 2000);
         }
         gems.forEach((g, i) => { if(g.x === px && g.y === py) { sessionCash += 10; nitroEnergy = Math.min(100, nitroEnergy + 10); gems.splice(i, 1); spawnCoinPop(); }});
-} 
+
       // --- P2 LOGIC ---
 if(isMultiplayer && p2MoveTimer >= (450 / p2Speed)) {
 
