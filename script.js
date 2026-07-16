@@ -284,19 +284,58 @@ function buyDiamond(amt) {
 function openGarage() {
     document.getElementById("main-menu").classList.add("hidden");
     document.getElementById("garage").classList.remove("hidden");
-    const list = document.getElementById("car-list"); list.innerHTML = "";
+    const list = document.getElementById("car-list");
+    list.innerHTML = "";
+
     const brands = ['PERODUA', 'PROTON', 'TOYOTA', 'LEGEND'];
     brands.forEach(b => {
-        let brandHTML = `<div class="brand-label">${b}</div><div class="car-row">`;
-        for(let key in CARS) {
-            if(CARS[key].brand === b) {
-                const owned = userData.cars.includes(key); const isSel = (selCarKey === key);
-                brandHTML += `<div style="background:#222; padding:15px; border-radius:15px; border:3px solid ${isSel ? '#f1c40f' : '#444'}; cursor:pointer; min-width:120px" onclick="${owned ? `selectCar('${key}')` : `buyCar('${key}')`}">
-                <div style="height: 80px; display: flex; align-items: center; justify-content: center;">${getCarHTML(key)}</div>
-                <br><b>${key.toUpperCase()}</b><br><small>${owned ? (isSel ? 'SELECTED' : 'OWNED') : (CARS[key].currency==='money'?'💰 ':'💎 ') + CARS[key].price}</small></div>`;
+        // Brand label
+        const brandLabel = document.createElement("div");
+        brandLabel.className = "brand-label";
+        brandLabel.textContent = b;
+        list.appendChild(brandLabel);
+
+        // Row container
+        const row = document.createElement("div");
+        row.className = "car-row";
+
+        for (let key in CARS) {
+            if (CARS[key].brand === b) {
+                const owned = (userData.cars || []).includes(key);
+                const isSel = (selCarKey === key);
+
+                const card = document.createElement("div");
+                card.style.background = "#222";
+                card.style.padding = "15px";
+                card.style.borderRadius = "15px";
+                card.style.border = `3px solid ${isSel ? '#f1c40f' : '#444'}`;
+                card.style.cursor = "pointer";
+                card.style.minWidth = "120px";
+                card.style.display = "inline-block";
+                card.style.textAlign = "center";
+
+                // inner HTML: car visual + label + price/owned
+                card.innerHTML = `
+                    <div style="height: 80px; display: flex; align-items: center; justify-content: center;">
+                        ${getCarHTML(key)}
+                    </div>
+                    <br><b>${key.toUpperCase()}</b><br>
+                    <small>${owned ? (isSel ? 'SELECTED' : 'OWNED') : (CARS[key].currency==='money' ? '💰 ' : '💎 ') + CARS[key].price}</small>
+                `;
+
+                // onclick handler
+                card.onclick = () => {
+                    if (owned) {
+                        selectCar(key);
+                    } else {
+                        buyCar(key);
+                    }
+                };
+
+                row.appendChild(card);
             }
         }
-        brandHTML += `</div>`; list.innerHTML += brandHTML;
+        list.appendChild(row);
     });
 }
 
