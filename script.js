@@ -25,12 +25,14 @@ let currentMapKey = 'cybercity', running = false, lastTime = 0, moveTimer = 0, p
 let obs = [], gems = [], items = [], isInvulnerable = false, nitroActive = false, nitroEnergy = 0, isDev = false, gameLevel = 1;
 
 // --- MULTIPLAYER LOGIC ---
+// --- MULTIPLAYER LOGIC ---
 let isMultiplayer = false;
-let p2x = 1, p2Lives = 0, p2Cash = 0, p2Invul = false;
+let p2x = 1, p2y = 4, p2Lives = 0, p2Cash = 0, p2Invul = false;
 let p2NitroActive = false;
-let p2NitroEnergy = 0;
+let p2NitroEnergy = 0;   // <- pastikan ini ada
 let obs2 = [], gems2 = [];
 let p2MoveTimer = 0;
+
 
 let levelTimer = 0;
 const LEVEL_INTERVAL = 30000;
@@ -478,8 +480,7 @@ if(p2NitroActive) {
         gems.forEach((g, i) => { if(g.x === px && g.y === py) { sessionCash += 10; nitroEnergy = Math.min(100, nitroEnergy + 10); gems.splice(i, 1); spawnCoinPop(); }});
 
       // --- P2 LOGIC ---
-if(isMultiplayer && p2MoveTimer >= (450 / p2Speed)) {
-
+if (isMultiplayer && p2MoveTimer >= (450 / p2Speed)) {
     p2MoveTimer = 0;
 
     obs2.forEach(o => o.y++);
@@ -488,36 +489,43 @@ if(isMultiplayer && p2MoveTimer >= (450 / p2Speed)) {
     obs2 = obs2.filter(o => o.y <= 5);
     gems2 = gems2.filter(g => g.y <= 5);
 
-    if(obs2.find(o => o.x === p2x && o.y === py) && !p2Invul) {
+    // gunakan p2y, bukan py
+    if (obs2.find(o => o.x === p2x && o.y === p2y) && !p2Invul) {
         p2Lives--;
         p2Invul = true;
-
-        if(p2Lives <= 0) return gameOver();
-
+        document.body.classList.add("shake-body");
+        setTimeout(() => document.body.classList.remove("shake-body"), 300);
+        if (p2Lives <= 0) return gameOver();
         setTimeout(() => p2Invul = false, 2000);
     }
 
     gems2.forEach((g, i) => {
-        if(g.x === p2x && g.y === py) {
+        if (g.x === p2x && g.y === p2y) {
+            console.log('P2 collected gem at', g, 'p2 pos', p2x, p2y, 'before energy', p2NitroEnergy); // debug sementara
             p2Cash += 10;
-            p2NitroEnergy = Math.min(100, p2NitroEnergy + 10);
-            gems2.splice(i,1);
+            p2NitroEnergy = Math.min(100, (Number(p2NitroEnergy) || 0) + 10);
+            gems2.splice(i, 1);
+            console.log('P2 energy after', p2NitroEnergy); // debug sementara
         }
     });
 }
 
-        // --- SPAWNING ---
-        if(Math.random() < 0.2) { 
-            obs.push({x: Math.floor(Math.random()*3), y: 0});
-            if(isMultiplayer) obs2.push({x: Math.floor(Math.random()*3), y: 0});
-        }
-        if(Math.random() < 0.1) {
-            gems.push({x: Math.floor(Math.random()*3), y: 0});
-            if(isMultiplayer) gems2.push({x: Math.floor(Math.random()*3), y: 0});
-        }
-        if(Math.random() < 0.02) items.push({x: Math.floor(Math.random()*3), y: 0});
-        
-             moveTimer = 0;
+// --- SPAWNING ---
+if (Math.random() < 0.2) { 
+    obs.push({ x: Math.floor(Math.random() * 3), y: 0 });
+    if (isMultiplayer) obs2.push({ x: Math.floor(Math.random() * 3), y: 0 });
+}
+if (Math.random() < 0.1) {
+    gems.push({ x: Math.floor(Math.random() * 3), y: 0 });
+    if (isMultiplayer) {
+        const newGem2 = { x: Math.floor(Math.random() * 3), y: 0 };
+        gems2.push(newGem2);
+        console.log('spawn gem2', newGem2); // <-- letak di sini (debug)
+    }
+}
+if (Math.random() < 0.02) items.push({ x: Math.floor(Math.random() * 3), y: 0 });
+
+moveTimer = 0;
     }
 
     render(); 
