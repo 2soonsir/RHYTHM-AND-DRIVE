@@ -164,3 +164,19 @@ input { padding: 15px; margin: 10px 0; width: 90%; border-radius: 8px; border: 1
 ::-webkit-scrollbar { height: 6px; }
 ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 ::-webkit-scrollbar-track { background: #111; }
+
+#game-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;        /* jangan biarkan stack menegak */
+  gap: 24px;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-x: auto;         /* benarkan scroll mendatar bila perlu */
+  padding: 16px;
+}
+.player-zone {
+  min-width: 320px;         /* pastikan setiap zone ada lebar minimum */
+  max-width: 48%;           /* cuba muatkan dua zone pada desktop */
+  box-sizing: border-box;
+}
