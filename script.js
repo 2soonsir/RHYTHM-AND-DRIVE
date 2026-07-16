@@ -180,13 +180,13 @@ function renderLeaderboard() {
 // --- Function control ---
 function openControl() {
     document.getElementById("main-menu").classList.add("hidden");
-    document.getElementById("Control-screen").classList.remove("hidden");
+    document.getElementById("controlBox").classList.remove("hidden");
     renderControl();
 }
 
 function openCredit() {
     document.getElementById("main-menu").classList.add("hidden");
-    document.getElementById("Credit-screen").classList.remove("hidden");
+    document.getElementById("creditBox").classList.remove("hidden");
     renderCredit();
 }
 
