@@ -478,7 +478,7 @@ if(isMultiplayer && p2MoveTimer >= (450 / p2Speed)) {
         if(Math.random() < 0.02) items.push({x: Math.floor(Math.random()*3), y: 0});
         
         moveTimer = 0;
-    }
+    
     render(); requestAnimationFrame(gameLoop);
 }
 function render() {
