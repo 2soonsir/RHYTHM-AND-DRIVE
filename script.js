@@ -389,6 +389,7 @@ function startRace() {
     
     if(isMultiplayer) {
         p2Lives = CARS[p2CarKey].hp; p2x = 1; p2Cash = 0; obs2 = []; gems2 = [];
+         p2MoveTimer = 0; 
         document.getElementById("p2-zone").style.display = "flex";
     } else {
         document.getElementById("p2-zone").style.display = "none";
@@ -485,7 +486,6 @@ if(isMultiplayer && p2MoveTimer >= (450 / p2Speed)) {
 }
     
 function render() {
-function render() {
     const m = MAPS[currentMapKey];
     
     // P1 RENDER
@@ -549,18 +549,6 @@ function gameOver() {
     if(!isDev) { userData.money += (sessionCash + (isMultiplayer ? p2Cash : 0)); saveData(); }
     showGameOverScreen();
 }
-
-// --- TOUCH & KEYBOARD INPUTS ---
-let touchStartX = 0;
-document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
-document.addEventListener('touchend', (e) => {
-    if (!running || isPaused) return;
-    const diff = e.changedTouches[0].clientX - touchStartX;
-    if (diff < -30 && px > 0) px--;
-    if (diff > 30 && px < 2) px++;
-}, { passive: true });
-
-
 // ... (SEMUA KOD ASAL KAU DARI ATAS SAMPAI GAME OVER TETAP SAMA)
 
 // --- TOUCH & KEYBOARD INPUTS (DIBERSIHKAN IKUT RULE KAU) ---
@@ -574,25 +562,32 @@ document.addEventListener('touchend', (e) => {
 }, { passive: true });
 
 window.onkeydown = (e) => {
-    if(e.key === "Escape") { togglePause(); return; }
-    if(!running || isPaused) return;
-    
-    const k = e.key; 
-
-    // 1. PEMAIN 1 (Sentiasa boleh guna A & D)
-    if((k === "a" || k === "A") && px > 0) px--;
-    if((k === "d" || k === "D") && px < 2) px++;
-    if(k === " " && nitroEnergy >= 30) nitroActive = true;
-
-    // 2. LOGIK ARROW KEYS (Dinamik ikut mode)
-    if(isMultiplayer) {
-        // Mode Versus: Arrow Keys LOCK untuk Player 2 sahaja
-        if(k === "ArrowLeft" && p2x > 0) p2x--;
-        if(k === "ArrowRight" && p2x < 2) p2x++;
-    } else {
-        // Mode Solo: Player 1 boleh guna Arrow Keys juga (Option)
-        if(k === "ArrowLeft" && px > 0) px--;
-        if(k === "ArrowRight" && px < 2) px++;
+    if(e.code === "Escape") { 
+        togglePause(); 
+        return; 
     }
 
+    if(!running || isPaused) return;
+
+    const k = e.key;
+
+    // 1. PEMAIN 1 (A & D)
+    if((k === "a" || k === "A") && px > 0) px--;
+    if((k === "d" || k === "D") && px < 2) px++;
+
+    // Nitro P1
+    if(e.code === "Space" && nitroEnergy >= 30) {
+        nitroActive = true;
+    }
+
+    // 2. LOGIK ARROW KEYS
+    if(isMultiplayer) {
+        // Player 2
+        if(e.code === "ArrowLeft" && p2x > 0) p2x--;
+        if(e.code === "ArrowRight" && p2x < 2) p2x++;
+    } else {
+        // Solo Player
+        if(e.code === "ArrowLeft" && px > 0) px--;
+        if(e.code === "ArrowRight" && px < 2) px++;
+    }
 };
