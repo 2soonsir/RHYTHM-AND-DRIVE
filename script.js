@@ -480,8 +480,7 @@ if(isMultiplayer && p2MoveTimer >= (450 / p2Speed)) {
         moveTimer = 0;
     }
     render(); requestAnimationFrame(gameLoop);
-
-
+}
 function render() {
     const m = MAPS[currentMapKey];
     
