@@ -183,12 +183,21 @@ function openControl() {
     document.getElementById("controlBox").classList.remove("hidden");
     renderControl();
 }
+function closeControl() {
+    document.getElementById("controlBox").classList.add("hidden");
+    document.getElementById("main-menu").classList.remove("hidden");
+}
 
 function openCredit() {
     document.getElementById("main-menu").classList.add("hidden");
     document.getElementById("creditBox").classList.remove("hidden");
     renderCredit();
 }
+function closeCredit() {
+    document.getElementById("creditBox").classList.add("hidden");
+    document.getElementById("main-menu").classList.remove("hidden");
+}
+
 
 let introStarted = false;
 function runFullIntro() {
