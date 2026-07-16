@@ -291,6 +291,59 @@ function openGarage() {
 
     const brands = ['PERODUA', 'PROTON', 'TOYOTA', 'LEGEND'];
     brands.forEach(b => {
+        // Label jenama
+        const brandLabel = document.createElement("div");
+        brandLabel.className = "brand-label";
+        brandLabel.textContent = b;
+        list.appendChild(brandLabel);
+
+        // Baris kereta
+        const row = document.createElement("div");
+        row.className = "car-row";
+
+        for (let key in CARS) {
+            if (CARS[key].brand === b) {
+                const owned = (userData.cars || []).includes(key);
+                const isSel = (selCarKey === key);
+
+                const card = document.createElement("div");
+                card.style.background = "#222";
+                card.style.padding = "15px";
+                card.style.borderRadius = "15px";
+                card.style.border = `3px solid ${isSel ? '#f1c40f' : '#444'}`;
+                card.style.cursor = "pointer";
+                card.style.minWidth = "140px"; // pastikan cukup lebar
+                card.style.display = "inline-block";
+                card.style.textAlign = "center";
+
+                if (isSel) card.classList.add('selected'); // <-- tambah class selected
+
+                card.innerHTML = `
+                    <div style="height: 80px; display: flex; align-items: center; justify-content: center;">
+                        ${getCarHTML(key)}
+                    </div>
+                    <br><b>${key.toUpperCase()}</b><br>
+                    <small>${owned ? (isSel ? 'SELECTED' : 'OWNED') : (CARS[key].currency === 'money' ? '💰 ' : '💎 ') + CARS[key].price}</small>
+                `;
+
+                card.onclick = () => {
+                    if (owned) selectCar(key);
+                    else buyCar(key);
+                };
+
+                row.appendChild(card);
+            }
+        }
+
+        list.appendChild(row);
+    });
+
+    // Selepas semua items ditambah, scroll selected ke tengah
+    const selectedEl = document.querySelector('.car-row .selected') || document.querySelector('.vs-car-item.selected');
+    if (selectedEl && selectedEl.scrollIntoView) {
+        selectedEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+}
         // Brand label
         const brandLabel = document.createElement("div");
         brandLabel.className = "brand-label";
