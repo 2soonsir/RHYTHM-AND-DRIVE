@@ -495,13 +495,14 @@ function gameLoop(t) {
         setTimeout(() => p2Invul = false, 2000);
       }
 
-      gems2.forEach((g, i) => {
-        if (g.x === p2x && g.y === p2y) {
-          p2Cash += 10;
-          p2NitroEnergy = Math.min(100, (Number(p2NitroEnergy) || 0) + 10);
-          gems2.splice(i, 1);
-        }
-      });
+    gems2.forEach((g, i) => {
+  if (g.x === p2x && g.y === p2y) {
+    p2Cash += 10;
+    p2NitroEnergy = Math.min(100, (Number(p2NitroEnergy) || 0) + 10);
+    gems2.splice(i, 1);
+    // spawnCoinPop();  // ← ADD P2 VERSION HERE
+  }
+});
 
       // --- SPAWNING ---
       if (Math.random() < 0.2) {
@@ -626,5 +627,6 @@ window.onkeydown = (e) => {
 };
 
 window.addEventListener('keyup', (e) => {
-  if (e.code === "Space") nitro*
-
+  if (e.code === "Space") nitroActive = false;
+  if (isMultiplayer && e.code === "Enter") p2NitroActive = false;  // ← ADD THIS
+});
