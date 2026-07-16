@@ -180,3 +180,22 @@ input { padding: 15px; margin: 10px 0; width: 90%; border-radius: 8px; border: 1
   max-width: 48%;           /* cuba muatkan dua zone pada desktop */
   box-sizing: border-box;
 }
+/* Garage / car row improvements */
+.car-row {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  overflow-x: auto;       /* benarkan scroll horizontal */
+  padding: 12px 16px;
+  scroll-behavior: smooth;
+}
+
+.car-row > div, .vs-car-item {
+  min-width: 140px;       /* pastikan kad cukup besar */
+  flex: 0 0 auto;
+}
+
+.car-row > div.selected, .vs-car-item.selected {
+  border-color: var(--primary) !important;
+  transform: scale(1.05);
+}
