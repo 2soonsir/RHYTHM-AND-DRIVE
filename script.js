@@ -499,16 +499,20 @@ if (isMultiplayer && p2MoveTimer >= (450 / p2Speed)) {
         setTimeout(() => p2Invul = false, 2000);
     }
 
-    gems2.forEach((g, i) => {
-        if (g.x === p2x && g.y === p2y) {
-            console.log('P2 collected gem at', g, 'p2 pos', p2x, p2y, 'before energy', p2NitroEnergy); // debug sementara
-            p2Cash += 10;
-            p2NitroEnergy = Math.min(100, (Number(p2NitroEnergy) || 0) + 10);
-            gems2.splice(i, 1);
-            console.log('P2 energy after', p2NitroEnergy); // debug sementara
-        }
-    });
-}
+   gems2.forEach((g, i) => {
+    if (g.x === p2x && g.y === p2y) {
+        console.log('P2 collected gem at', g, 'p2 pos', p2x, p2y, 'before energy', p2NitroEnergy); // debug sementara
+        p2Cash += 10;
+        p2NitroEnergy = Math.min(100, (Number(p2NitroEnergy) || 0) + 10);
+        gems2.splice(i, 1);
+
+        // segera update UI nitro P2 supaya nampak perubahan terus
+        const p2NitroEl = document.getElementById("nitro-fill-p2");
+        if (p2NitroEl) p2NitroEl.style.width = (Number(p2NitroEnergy) || 0) + "%";
+
+        console.log('P2 energy after', p2NitroEnergy); // debug sementara
+    }
+});
 
 // --- SPAWNING ---
 if (Math.random() < 0.2) { 
