@@ -183,6 +183,7 @@ function openControl() {
     document.getElementById("controlBox").classList.remove("hidden");
     renderControl();
 }
+
 function closeControl() {
     document.getElementById("controlBox").classList.add("hidden");
     document.getElementById("main-menu").classList.remove("hidden");
