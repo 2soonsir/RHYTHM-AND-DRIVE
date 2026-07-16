@@ -316,7 +316,7 @@ function openGarage() {
                 card.style.display = "inline-block";
                 card.style.textAlign = "center";
 
-                if (isSel) card.classList.add('selected'); // <-- tambah class selected
+                if (isSel) card.classList.add('selected');
 
                 card.innerHTML = `
                     <div style="height: 80px; display: flex; align-items: center; justify-content: center;">
@@ -338,7 +338,7 @@ function openGarage() {
         list.appendChild(row);
     });
 
-    // Selepas semua items ditambah, scroll selected ke tengah
+    // Selepas semua items ditambah, scroll selected ke tengah (jika ada)
     const selectedEl = document.querySelector('.car-row .selected') || document.querySelector('.vs-car-item.selected');
     if (selectedEl && selectedEl.scrollIntoView) {
         selectedEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
@@ -611,24 +611,27 @@ function render() {
     document.getElementById("cash-ui").innerText = sessionCash;
     document.getElementById("nitro-fill").style.width = nitroEnergy + "%";
 
-    // P2 RENDER
-    if(isMultiplayer) {
-        let h2 = "";
-        for(let y=0; y<5; y++) {
-            h2 += "<div class='row'>";
-            for(let x=0; x<3; x++) {
-                let content = "";
-                if(x === p2x && y === py) content = getCarHTML(p2CarKey, p2Invul ? "invincible" : "");
-                else if(obs2.some(o => o.x===x && o.y===y)) content = m.obs;
-                else if(gems2.some(g => g.x===x && g.y===y)) content = m.item;
-                h2 += `<div class="cell">${content}</div>`;
-            }
-            h2 += "</div>";
+ // P2 RENDER
+if (isMultiplayer) {
+    let h2 = "";
+    for (let y = 0; y < 5; y++) {
+        h2 += "<div class='row'>";
+        for (let x = 0; x < 3; x++) {
+            let content = "";
+            if (x === p2x && y === p2y) content = getCarHTML(p2CarKey, (p2Invul ? "invincible " : "") + (p2NitroActive ? "nitro-fx" : ""));
+            else if (obs2.some(o => o.x === x && o.y === y)) content = m.obs;
+            else if (gems2.some(g => g.x === x && g.y === y)) content = m.item;
+            h2 += `<div class="cell">${content}</div>`;
         }
-        document.getElementById("game-road-p2").innerHTML = h2;
-        document.getElementById("p2-lives-ui").innerHTML = "❤️".repeat(Math.max(0, p2Lives));
-        document.getElementById("p2-cash-ui").innerText = p2Cash;
+        h2 += "</div>";
     }
+    document.getElementById("game-road-p2").innerHTML = h2;
+    document.getElementById("p2-lives-ui").innerHTML = "❤️".repeat(Math.max(0, p2Lives));
+    document.getElementById("p2-cash-ui").innerText = p2Cash;
+
+    // update nitro bar P2
+    const p2NitroEl = document.getElementById("nitro-fill-p2");
+    if (p2NitroEl) p2NitroEl.style.width = (Number(p2NitroEnergy) || 0) + "%";
 }
 
 function getCarHTML(key, extraClass="") {
