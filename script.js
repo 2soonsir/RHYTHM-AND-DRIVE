@@ -27,7 +27,10 @@ let obs = [], gems = [], items = [], isInvulnerable = false, nitroActive = false
 // --- MULTIPLAYER LOGIC ---
 let isMultiplayer = false;
 let p2x = 1, p2Lives = 0, p2Cash = 0, p2Invul = false;
+let p2NitroActive = false;
+let p2NitroEnergy = 0;
 let obs2 = [], gems2 = [];
+let p2MoveTimer = 0;
 
 let levelTimer = 0;
 const LEVEL_INTERVAL = 30000;
@@ -406,8 +409,19 @@ function gameLoop(t) {
 
     let speed = (CARS[selCarKey].speed + (gameLevel * 0.12));
     if(nitroActive) { speed *= 2.8; nitroEnergy -= 0.6; if(nitroEnergy <= 0) nitroActive = false; }
-    
+
+    // P2 speed
+let p2Speed = (CARS[p2CarKey].speed + (gameLevel * 0.12));
+
+if(p2NitroActive) { 
+    p2Speed *= 2.8; 
+    p2NitroEnergy -= 0.6; 
+    if(p2NitroEnergy <= 0) p2NitroActive = false; 
+}
     moveTimer += dt;
+    if(isMultiplayer) {
+    p2MoveTimer += dt;
+}
     // LOGIK 450 KAU TETAP SAMA
     if(moveTimer >= (450 / speed)) {
         // --- P1 LOGIC ---
@@ -422,18 +436,35 @@ function gameLoop(t) {
             setTimeout(() => isInvulnerable = false, 2000);
         }
         gems.forEach((g, i) => { if(g.x === px && g.y === py) { sessionCash += 10; nitroEnergy = Math.min(100, nitroEnergy + 10); gems.splice(i, 1); spawnCoinPop(); }});
+} 
+      // --- P2 LOGIC ---
+if(isMultiplayer && p2MoveTimer >= (450 / p2Speed)) {
 
-        // --- P2 LOGIC ---
-        if(isMultiplayer) {
-            obs2.forEach(o => o.y++); gems2.forEach(g => g.y++);
-            obs2 = obs2.filter(o => o.y <= 5); gems2 = gems2.filter(g => g.y <= 5);
-            if(obs2.find(o => o.x === p2x && o.y === py) && !p2Invul) {
-                p2Lives--; p2Invul = true;
-                if(p2Lives <= 0) return gameOver();
-                setTimeout(() => p2Invul = false, 2000);
-            }
-            gems2.forEach((g, i) => { if(g.x === p2x && g.y === py) { p2Cash += 10; gems2.splice(i, 1); }});
+    p2MoveTimer = 0;
+
+    obs2.forEach(o => o.y++);
+    gems2.forEach(g => g.y++);
+
+    obs2 = obs2.filter(o => o.y <= 5);
+    gems2 = gems2.filter(g => g.y <= 5);
+
+    if(obs2.find(o => o.x === p2x && o.y === py) && !p2Invul) {
+        p2Lives--;
+        p2Invul = true;
+
+        if(p2Lives <= 0) return gameOver();
+
+        setTimeout(() => p2Invul = false, 2000);
+    }
+
+    gems2.forEach((g, i) => {
+        if(g.x === p2x && g.y === py) {
+            p2Cash += 10;
+            p2NitroEnergy = Math.min(100, p2NitroEnergy + 10);
+            gems2.splice(i,1);
         }
+    });
+}
 
         // --- SPAWNING ---
         if(Math.random() < 0.2) { 
@@ -538,7 +569,12 @@ window.onkeydown = (e) => {
     if(isMultiplayer) {
         if(e.key === "ArrowLeft" && p2x > 0) p2x--;
         if(e.key === "ArrowRight" && p2x < 2) p2x++;
+        
+    if(e.key === "Enter" && p2NitroEnergy >= 30) {
+        p2NitroActive = true;
     }
+}
+    
 // ... (SEMUA KOD ASAL KAU DARI ATAS SAMPAI GAME OVER TETAP SAMA)
 
 // --- TOUCH & KEYBOARD INPUTS (DIBERSIHKAN IKUT RULE KAU) ---
