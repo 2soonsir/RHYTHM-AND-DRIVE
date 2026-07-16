@@ -176,25 +176,33 @@ To everyone who supported this project.</p>
 </div>
 
 <div id="game-container" class="hidden">
-    <div class="player-zone">
-        <div id="game-road"></div>
-        <div class="stats-bar">
-            P1: <span id="lives-ui"></span> | 💰 <span id="cash-ui">0</span> | ⚡ <span id="level-ui">LV1</span>
-        </div>
+  <!-- PLAYER 1 -->
+  <div class="player-zone">
+    <div id="game-road"></div>
+    <div class="stats-bar">
+      P1: <span id="lives-ui"></span> | 💰 <span id="cash-ui">0</span> | ⚡ <span id="level-ui">LV1</span>
     </div>
 
-    <div class="player-zone" id="p2-zone" style="display: none;">
-        <div id="game-road-p2" style="border-left: 8px dashed #444; border-right: 8px dashed #444;"></div>
-        <div class="stats-bar" style="border-color: #3498db;">
-            P2: <span id="p2-lives-ui"></span> | 💰 <span id="p2-cash-ui">0</span>
-        </div>
-    </div>
-
+    <!-- Nitro P1 -->
     <div style="width: 100%; display: flex; justify-content: center; margin-top: 20px;">
-        <div style="width: 300px; height: 15px; background: #333; border-radius: 5px; overflow: hidden; border: 1px solid #555;">
-            <div id="nitro-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3498db, #9b59b6); transition: width 0.1s;"></div>
-        </div>
+      <div style="width: 300px; height: 15px; background: #333; border-radius: 5px; overflow: hidden; border: 1px solid #555;">
+        <div id="nitro-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3498db, #9b59b6); transition: width 0.1s;"></div>
+      </div>
     </div>
+  </div>
+
+  <!-- PLAYER 2 -->
+  <div class="player-zone" id="p2-zone" style="display: none;">
+    <div id="game-road-p2" style="border-left: 8px dashed #444; border-right: 8px dashed #444;"></div>
+    <div class="stats-bar" style="border-color: #3498db;">
+      P2: <span id="p2-lives-ui"></span> | 💰 <span id="p2-cash-ui">0</span>
+    </div>
+
+    <!-- Nitro P2 -->
+    <div id="nitro-bar-p2" style="width: 300px; height: 15px; background: #333; border-radius: 10px; margin-top:10px; overflow:hidden; border:1px solid var(--neon-blue);">
+      <div id="nitro-fill-p2" class="nitro-fill" style="width:0%"></div>
+    </div>
+  </div>
 </div>
 
 <script src="script.js"></script>
