@@ -1,4 +1,5 @@
-// script.js (WITH LEVEL-BASED DIFFICULTY SCALING)
+
+// script.js (WITH LEVEL-BASED DIFFICULTY + NITRO DRAIN)
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const bgMusic = document.getElementById("bg-music");
 const menuMusic = document.getElementById("menu-music");
@@ -44,12 +45,12 @@ function stopAllMusic() {
   bgMusic.pause(); bgMusic.currentTime = 0;
 }
 
-// NEW: Calculate difficulty multiplier based on level
+// Calculate difficulty multiplier based on level
 function getDifficultyMultiplier() {
   return 1 + ((gameLevel - 1) * 0.15); // +15% speed per level
 }
 
-// NEW: Calculate spawn chance based on level
+// Calculate spawn chance based on level
 function getSpawnChance(baseChance) {
   return baseChance * (1 + ((gameLevel - 1) * 0.1)); // +10% spawn rate per level
 }
@@ -300,7 +301,7 @@ function buyDiamond(amt) {
     userData.money -= amt * 150;
     userData.diamond = curD + amt;
     saveData(); updateUI(); alert("Berjaya!");
-  } else alert("Duit tak cukup!");
+  } else alert("Duit tak cukup bey!");
 }
 
 function openGarage() {
@@ -361,7 +362,7 @@ function buyCar(key) {
   if (val >= car.price) {
     if (car.currency === 'money') userData.money -= car.price; else userData.diamond -= car.price;
     userData.cars.push(key); saveData(); selectCar(key); updateUI();
-  } else alert("Tak cukup modal!");
+  } else alert("Tak cukup modal bey!");
 }
 
 function closeGarage() { document.getElementById("garage").classList.add("hidden"); document.getElementById("main-menu").classList.remove("hidden"); }
@@ -492,7 +493,7 @@ function startRace() {
   requestAnimationFrame(gameLoop);
 }
 
-// UPDATED: gameLoop with difficulty scaling
+// 🔥 UPDATED: gameLoop with NITRO DRAIN + difficulty scaling
 function gameLoop(t) {
   if (!running || isPaused) return;
   let dt = t - lastTime; lastTime = t;
@@ -501,11 +502,29 @@ function gameLoop(t) {
   moveTimer += dt;
   if (isMultiplayer) p2MoveTimer += dt;
   
-  // NEW: Apply difficulty multiplier to spawn chances
+  // 🔥 NEW: NITRO DRAIN LOGIC FOR P1
+  if (nitroActive && nitroEnergy > 0) {
+    nitroEnergy -= dt * 0.05; // Drain 5% per second
+    if (nitroEnergy <= 0) {
+      nitroEnergy = 0;
+      nitroActive = false; // Auto turn off when empty
+    }
+  }
+  
+  // 🔥 NEW: NITRO DRAIN LOGIC FOR P2
+  if (isMultiplayer && p2NitroActive && p2NitroEnergy > 0) {
+    p2NitroEnergy -= dt * 0.05; // Drain 5% per second
+    if (p2NitroEnergy <= 0) {
+      p2NitroEnergy = 0;
+      p2NitroActive = false; // Auto turn off when empty
+    }
+  }
+  
+  // Apply difficulty multiplier to spawn chances
   const difficultyMultiplier = getDifficultyMultiplier();
   const obsSpawnChance = getSpawnChance(0.02);
   const gemSpawnChance = getSpawnChance(0.01);
-  const itemSpawnChance = 0.005; // Keep items constant
+  const itemSpawnChance = 0.005;
   
   // --- SPAWNING LOGIC ---
   if (Math.random() < obsSpawnChance) {
@@ -522,7 +541,7 @@ function gameLoop(t) {
   if (Math.random() < itemSpawnChance) items.push({ x: Math.floor(Math.random() * 3), y: 0 });
   
   // --- P1 LOGIC with difficulty scaling ---
-  const p1Speed = CARS[selCarKey].speed * difficultyMultiplier; // NEW: Apply multiplier
+  const p1Speed = CARS[selCarKey].speed * difficultyMultiplier;
   if (moveTimer >= (450 / p1Speed)) {
     moveTimer = 0;
     obs.forEach(o => o.y++);
@@ -560,7 +579,7 @@ function gameLoop(t) {
   
   // --- P2 LOGIC with difficulty scaling ---
   if (isMultiplayer) {
-    const p2SpeedScaled = p2Speed * difficultyMultiplier; // NEW: Apply multiplier
+    const p2SpeedScaled = p2Speed * difficultyMultiplier;
     if (p2MoveTimer >= (450 / p2SpeedScaled)) {
       p2MoveTimer = 0;
       obs2.forEach(o => o.y++);
