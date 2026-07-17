@@ -494,6 +494,7 @@ function startRace() {
     document.getElementById("p2-zone").style.display = "none";
   }
 
+  // 🔥 Spawn obstacle ikut mode
   if (isMultiplayer) {
     setInterval(() => spawnObstacle("game-road"), 2000);
     setInterval(() => spawnObstacle("game-road-p2"), 2000);
@@ -512,7 +513,7 @@ function spawnObstacle(roadId) {
   const road = document.getElementById(roadId);
   if (!road) return;
 
-  const obstacle = document.createElement("div");
+  const obstacle = document.createElement("div");   // ← WAJIB ada
   obstacle.className = "obstacle";
   obstacle.style.width = "40px";
   obstacle.style.height = "40px";
@@ -528,6 +529,7 @@ function spawnObstacle(roadId) {
     pos += 5;
     obstacle.style.top = pos + "px";
 
+    // Collision check
     const car = document.querySelector("#" + roadId + " .car-visual");
     if (car) {
       const carRect = car.getBoundingClientRect();
@@ -539,6 +541,7 @@ function spawnObstacle(roadId) {
         carRect.bottom > obsRect.top
       ) {
         console.log("Collision!");
+        // kurangkan nyawa atau trigger game over
       }
     }
 
@@ -556,6 +559,32 @@ function gameLoop(t) {
   let dt = t - lastTime; lastTime = t;
 
   checkLevelUp(dt);
+
+  let speed = (CARS[selCarKey].speed + (gameLevel * 0.12));
+  if (nitroActive) { 
+    speed *= 2.8; 
+    nitroEnergy -= 0.6; 
+    if (nitroEnergy <= 0) nitroActive = false; 
+  }
+
+  // P2 speed (multiplayer)
+  if (isMultiplayer) {
+    let p2Speed = (CARS[p2CarKey].speed + (gameLevel * 0.12));
+    if (p2NitroActive) {
+      p2Speed *= 2.8;
+      p2NitroEnergy -= 0.6;
+      if (p2NitroEnergy <= 0) p2NitroActive = false;
+    }
+    p2MoveTimer += dt;
+  }
+
+  moveTimer += dt;
+
+  // ... kod lain untuk update kereta, UI, dll
+
+  requestAnimationFrame(gameLoop);
+}
+
 
   let speed = (CARS[selCarKey].speed + (gameLevel * 0.12));
   if (nitroActive) { 
