@@ -1,4 +1,4 @@
-// script.js (versi diperbaiki - Fixed 4 bugs)
+// script.js (versi diperbaiki - Fixed 4 bugs + Multiplayer vehicle selection fix)
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const bgMusic = document.getElementById("bg-music");
@@ -406,18 +406,58 @@ function openVersusSelection() {
   renderVSList('p1'); renderVSList('p2');
 }
 
+// FIX #5: MULTIPLAYER VEHICLE SELECTION - Show ALL cars (owned + unowned)
 function renderVSList(player) {
   const container = document.getElementById(`vs-list-${player}`);
   container.innerHTML = "";
-  userData.cars.forEach(key => {
+  let selectedElement = null;
+  
+  // Loop through ALL cars, not just owned
+  for (let key in CARS) {
+    const owned = (userData.cars || []).includes(key);
     const isSel = (player === 'p1' ? selCarKey === key : p2CarKey === key);
+    
     const div = document.createElement("div");
     div.className = "vs-car-item";
-    if (isSel) div.style.border = "3px solid var(--primary)";
-    div.innerHTML = `<div style="transform:scale(0.5)">${getCarHTML(key)}</div><p style="font-size:10px">${key.toUpperCase()}</p>`;
-    div.onclick = () => { if (player === 'p1') selCarKey = key; else p2CarKey = key; renderVSList(player); };
+    
+    if (isSel) {
+      div.classList.add('vs-selected');
+      div.style.border = "3px solid var(--primary)";
+      div.style.boxShadow = "0 0 20px var(--primary)";
+      selectedElement = div;
+    }
+    
+    // Jika tak owned, set opacity jadi faded
+    if (!owned) {
+      div.style.opacity = "0.4";
+      div.style.pointerEvents = "none"; // Prevent click
+    }
+    
+    div.innerHTML = `
+      <div style="transform:scale(0.5)">${getCarHTML(key)}</div>
+      <p style="font-size:10px">${key.toUpperCase()}</p>
+      ${!owned ? `<p style="font-size:8px; color:#f1c40f;">🔒</p>` : ''}
+    `;
+    
+    // Only clickable if owned
+    if (owned) {
+      div.style.cursor = "pointer";
+      div.onclick = () => { 
+        if (player === 'p1') selCarKey = key; 
+        else p2CarKey = key; 
+        renderVSList(player); 
+      };
+    }
+    
     container.appendChild(div);
-  });
+  }
+  
+  // Auto-scroll ke selected car
+  if (selectedElement) {
+    setTimeout(() => {
+      selectedElement.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }, 50);
+  }
 }
 
 function confirmVehicles() {
