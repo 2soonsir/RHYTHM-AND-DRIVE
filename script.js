@@ -415,14 +415,17 @@ function openVersusSelection() {
   renderVSList('p1'); renderVSList('p2');
 }
 
-// FIX #5: MULTIPLAYER VEHICLE SELECTION - Show ALL cars (owned + unowned)
+// FIX #5: MULTIPLAYER VEHICLE SELECTION - Show ALL cars in CORRECT ORDER
 function renderVSList(player) {
   const container = document.getElementById(`vs-list-${player}`);
   container.innerHTML = "";
   let selectedElement = null;
   
-  // Loop through ALL cars, not just owned
-  for (let key in CARS) {
+  // Define CORRECT ORDER - KANCIL FIRST!
+  const carOrder = ['kancil', 'myvi', 'satria', 'wira', 'saga', 'perdana', 'hilux', 'kancil_r'];
+  
+  // Loop in order
+  carOrder.forEach(key => {
     const owned = (userData.cars || []).includes(key);
     const isSel = (player === 'p1' ? selCarKey === key : p2CarKey === key);
     
@@ -459,7 +462,7 @@ function renderVSList(player) {
     }
     
     container.appendChild(div);
-  }
+  });
   
   // Auto-scroll ke selected car
   if (selectedElement) {
