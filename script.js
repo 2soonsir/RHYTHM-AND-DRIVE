@@ -494,7 +494,6 @@ function startRace() {
     document.getElementById("p2-zone").style.display = "none";
   }
 
-  // 🔥 Spawn obstacle ikut mode
   if (isMultiplayer) {
     setInterval(() => spawnObstacle("game-road"), 2000);
     setInterval(() => spawnObstacle("game-road-p2"), 2000);
@@ -513,7 +512,7 @@ function spawnObstacle(roadId) {
   const road = document.getElementById(roadId);
   if (!road) return;
 
-  const obstacle = document.createElement("div");   // ← WAJIB ada
+  const obstacle = document.createElement("div");
   obstacle.className = "obstacle";
   obstacle.style.width = "40px";
   obstacle.style.height = "40px";
@@ -529,7 +528,6 @@ function spawnObstacle(roadId) {
     pos += 5;
     obstacle.style.top = pos + "px";
 
-    // Collision check
     const car = document.querySelector("#" + roadId + " .car-visual");
     if (car) {
       const carRect = car.getBoundingClientRect();
@@ -541,7 +539,6 @@ function spawnObstacle(roadId) {
         carRect.bottom > obsRect.top
       ) {
         console.log("Collision!");
-        // kurangkan nyawa atau trigger game over
       }
     }
 
@@ -560,69 +557,74 @@ function gameLoop(t) {
 
   checkLevelUp(dt);
 
-  let speed = (CARS[selCarKey].speed + (gameLevel * 0.12));
-  if (nitroActive) { 
-    speed *= 2.8; 
-    nitroEnergy -= 0.6; 
-    if (nitroEnergy <= 0) nitroActive = false; 
-  }
+  // --- P1 LOGIC ---
+  obs.forEach(o => o.y++);
+  gems.forEach(g => g.y++);
+  items.forEach(i => i.y++);
+  obs = obs.filter(o => o.y <= 5);
+  gems = gems.filter(g => g.y <= 5);
+  items = items.filter(i => i.y <= 5);
 
-  // P2 speed (multiplayer)
-  if (isMultiplayer) {
-    let p2Speed = (CARS[p2CarKey].speed + (gameLevel * 0.12));
-    if (p2NitroActive) {
-      p2Speed *= 2.8;
-      p2NitroEnergy -= 0.6;
-      if (p2NitroEnergy <= 0) p2NitroActive = false;
+  items.forEach((it, idx) => {
+    if (it.x === px && it.y === py) {
+      curLives++;
+      items.splice(idx, 1);
     }
-    p2MoveTimer += dt;
+  });
+
+  if (obs.find(o => o.x === px && o.y === py) && !isInvulnerable) {
+    curLives--;
+    isInvulnerable = true;
+    document.body.classList.add("shake-body");
+    setTimeout(() => document.body.classList.remove("shake-body"), 300);
+
+    if (curLives <= 0) return gameOver();
+
+    setTimeout(() => isInvulnerable = false, 2000);
   }
 
-  moveTimer += dt;
+  gems.forEach((g, i) => {
+    if (g.x === px && g.y === py) {
+      sessionCash += 10;
+      nitroEnergy = Math.min(100, nitroEnergy + 10);
+      gems.splice(i, 1);
+      spawnCoinPop();
+    }
+  });
 
-  // ... kod lain untuk update kereta, UI, dll
+  // --- P2 LOGIC ---
+  if (isMultiplayer && p2MoveTimer >= (450 / p2Speed)) {
+    p2MoveTimer = 0;
+
+    obs2.forEach(o => o.y++);
+    gems2.forEach(g => g.y++);
+    obs2 = obs2.filter(o => o.y <= 5);
+    gems2 = gems2.filter(g => g.y <= 5);
+
+    if (obs2.find(o => o.x === p2x && o.y === p2y) && !p2Invul) {
+      p2Lives--;
+      p2Invul = true;
+      document.body.classList.add("shake-body");
+      setTimeout(() => document.body.classList.remove("shake-body"), 300);
+
+      if (p2Lives <= 0) return gameOver();
+
+      setTimeout(() => p2Invul = false, 2000);
+    }
+
+    gems2.forEach((g, i) => {
+      if (g.x === p2x && g.y === p2y) {
+        p2Cash += 10;
+        p2NitroEnergy = Math.min(100, (Number(p2NitroEnergy) || 0) + 10);
+        gems2.splice(i, 1);
+        spawnCoinPop(true);
+      }
+    });
+  }
 
   requestAnimationFrame(gameLoop);
 }
-  
-    // --- P1 LOGIC ---
-    obs.forEach(o => o.y++); gems.forEach(g => g.y++); items.forEach(i => i.y++);
-    obs = obs.filter(o => o.y <= 5); gems = gems.filter(g => g.y <= 5); items = items.filter(i => i.y <= 5);
-    items.forEach((it, idx) => { if (it.x === px && it.y === py) { curLives++; items.splice(idx, 1); }});
-    if (obs.find(o => o.x === px && o.y === py) && !isInvulnerable) {
-      curLives--; isInvulnerable = true;
-      document.body.classList.add("shake-body");
-      setTimeout(() => document.body.classList.remove("shake-body"), 300);
-      if (curLives <= 0) return gameOver();
-      setTimeout(() => isInvulnerable = false, 2000);
-    }
-    gems.forEach((g, i) => { if (g.x === px && g.y === py) { sessionCash += 10; nitroEnergy = Math.min(100, nitroEnergy + 10); gems.splice(i, 1); spawnCoinPop(); }});
 
-    // --- P2 LOGIC ---
-    if (isMultiplayer && p2MoveTimer >= (450 / p2Speed)) {
-      p2MoveTimer = 0;
-
-      obs2.forEach(o => o.y++); gems2.forEach(g => g.y++);
-      obs2 = obs2.filter(o => o.y <= 5); gems2 = gems2.filter(g => g.y <= 5);
-
-      if (obs2.find(o => o.x === p2x && o.y === p2y) && !p2Invul) {
-        p2Lives--;
-        p2Invul = true;
-        document.body.classList.add("shake-body");
-        setTimeout(() => document.body.classList.remove("shake-body"), 300);
-        if (p2Lives <= 0) return gameOver();
-        setTimeout(() => p2Invul = false, 2000);
-      }
-
-      gems2.forEach((g, i) => {
-        if (g.x === p2x && g.y === p2y) {
-          p2Cash += 10;
-          p2NitroEnergy = Math.min(100, (Number(p2NitroEnergy) || 0) + 10);
-          gems2.splice(i, 1);
-          // FIX #2: Added P2 coin pop
-          spawnCoinPop(true);
-        }
-      });
 
       // --- SPAWNING (FIX #1: Gerak spawn logic keluar dari P2 timer) ---
       if (Math.random() < 0.2) {
