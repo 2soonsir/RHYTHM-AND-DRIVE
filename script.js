@@ -224,7 +224,7 @@ function runFullIntro() {
 
 function startSystemBoot() {
   const text = document.getElementById("intro-text");
-  let lines = ["> BOOTING RND...", "> SYNCING DIAMOND_SHOP...", "> READY."];
+  let lines = ["> BOOTING RND...", "> SYNCING DIAMOND_SHOP DATA...", "> READY."];
   let i = 0;
   let int = setInterval(() => {
     if (i < lines.length) { text.innerText = lines[i]; text.style.width = "100%"; i++; }
@@ -415,6 +415,10 @@ function openVersusSelection() {
   renderVSList('p1'); renderVSList('p2');
 }
 
+function closeVersusscreen() {
+  document.getElementById("versus-screen").classList.add("hidden");
+  document.getElementById("main-menu").classList.remove("hidden");
+  
 // FIX #5: MULTIPLAYER VEHICLE SELECTION - Show ALL cars in CORRECT ORDER
 function renderVSList(player) {
   const container = document.getElementById(`vs-list-${player}`);
