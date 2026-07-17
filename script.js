@@ -418,7 +418,7 @@ function openVersusSelection() {
 function closeVersusscreen() {
   document.getElementById("versus-screen").classList.add("hidden");
   document.getElementById("main-menu").classList.remove("hidden");
-  
+}
 // FIX #5: MULTIPLAYER VEHICLE SELECTION - Show ALL cars in CORRECT ORDER
 function renderVSList(player) {
   const container = document.getElementById(`vs-list-${player}`);
