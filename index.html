@@ -1,80 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RHYTHM N DRIVE [RnD]</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RHYTHM N DRIVE [RnD]</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body id="game-body">
 
-  <!-- Audio -->
-  <audio id="menu-music" src="menu_theme.mp3" loop preload="auto"></audio>
-  <audio id="bg-music" src="battle_theme.mp3" loop preload="auto"></audio>
+<audio id="menu-music" loop preload="auto"></audio>
+<audio id="bg-music" loop preload="auto"></audio>
 
-  <!-- Mute Button -->
-  <button id="mute-btn" onclick="toggleMute()" aria-label="Mute or Unmute">🔊</button>
+<button id="mute-btn" onclick="toggleMute()" title="Mute/Unmute">🔊</button>
 
-  <!-- Level Up Banner -->
-  <div id="levelup-banner">⚡ LEVEL UP!</div>
+<div id="levelup-banner">⚡ LEVEL UP!</div>
 
-  <!-- Pause Screen -->
-  <div id="pause-screen">
+<div id="pause-screen">
     <h1>PAUSED</h1>
     <p>[ TEKAN ESC UNTUK SAMBUNG ]</p>
     <button class="menu-btn btn-race" onclick="togglePause()">▶ SAMBUNG</button>
     <button class="menu-btn btn-danger" onclick="quitToMenu()">✖ QUIT</button>
-  </div>
+</div>
 
-  <!-- Game Over Screen -->
-  <div id="gameover-screen">
+<div id="gameover-screen">
     <h1>GAME OVER</h1>
     <div class="go-score">💰 <span id="go-cash">0</span></div>
     <div class="go-sub">DIAMOND KAU: 💎 <span id="go-diamond">0</span></div>
     <button class="menu-btn btn-special" id="go-continue-btn" onclick="continueGame()">💎 CONTINUE (1 DIAMOND)</button>
     <button class="menu-btn" style="background:#555; color:white;" onclick="goToMenu()">↩ BALIK MENU</button>
-  </div>
+</div>
 
-  <!-- Intro Screen -->
-  <div id="intro-screen" onclick="runFullIntro()">
+<div id="intro-screen" onclick="runFullIntro()">
     <div id="studio-logo" style="color:red; font-size:2.5em; font-weight:bold; letter-spacing:10px; opacity:0; transition:2s;">GAGAKZ STUDIO</div>
     <div id="intro-text" style="color:var(--primary); font-size:1.5em; margin-top:20px; white-space: nowrap; overflow: hidden; width: 0; font-weight: bold;"></div>
     <div id="press-start" style="margin-top:80px; color:#FFFAF0; letter-spacing:5px; font-size:1em; animation: blink 1.5s infinite;">[ CLICK TO START YOUR ENGINE ]</div>
-  </div>
+</div>
 
-  <!-- Versus Screen -->
-  <div id="versus-screen" class="hidden" style="text-align:center; max-height:95vh; overflow-y:auto;">
+<div id="login-screen" class="hidden">
+    <div class="title-card">RHYTHM N DRIVE</div>
+    <h1 style="color: #e74c3c;">RODA DAH BERASAP</h1>
+    <div class="acc-box">
+        <input type="text" id="username" placeholder="USERNAME">
+        <input type="password" id="password" placeholder="PASSWORD">
+        <button class="menu-btn btn-race" onclick="login()">ENTER GAME</button>
+        <button class="menu-btn" style="background:#e67e22; color:white" onclick="register()">CREATE ACCOUNT</button>
+        <button class="menu-btn btn-danger" onclick="hardReset()">⚠ WIPE ALL DATA</button>
+    </div>
+</div>
+
+<div id="main-menu" class="hidden">
+    <div class="title-card">RHYTHM N DRIVE</div>
+    <div id="dev-tag" class="hidden">[ RND LABS ACCESS ACTIVE ]</div>
+    <div style="font-size: 1.8em; margin-bottom: 10px;">💰 <span id="menu-money">0</span> | 💎 <span id="menu-diamond">0</span></div>
+    <button class="menu-btn btn-race" onclick="openMapSelect()">START RACE</button>
+    <button class="menu-btn" style="background:#3498db; color:white" onclick="openGarage()">GARAGE</button>
+    <button class="menu-btn btn-special" onclick="openStore()">DIAMOND SHOP 💎</button>
+    <button class="menu-btn" style="background:#e67e22; color:white" onclick="openLeaderboard()">🏆 LEADERBOARD</button>
+    <button class="menu-btn" style="background:#FFC0CB; color:white" onclick="openControl()">CONTROL</button>
+    <button class="menu-btn" style="background:#FF1493; color:white" onclick="openCredit()">CREDIT</button>
+    <button class="menu-btn" style="background:#555; color:white" onclick="location.reload()">LOGOUT</button>
+</div>
+
+<div id="diamond-store" class="hidden">
+    <h1>DIAMOND EXCHANGE</h1>
+    <div class="acc-box">
+        <p>1 DIAMOND = 💰 150</p>
+        <button class="menu-btn btn-special" onclick="buyDiamond(1)">BUY 1 💎</button>
+        <button class="menu-btn btn-special" style="background:#8e44ad" onclick="buyDiamond(5)">BUY 5 💎 (💰750)</button>
+    </div>
+    <button class="menu-btn" style="background:#555; color:white; margin-top:20px" onclick="closeStore()">BACK</button>
+</div>
+
+<div id="controlBox" class="hidden" style="position:fixed;
+            top:50%;
+            left:50%;
+            transform:translate(-50%,-50%);
+            text-align:center;">
+    <p>════════════════════════════</p>
+    <h2><strong>CONTROL</strong></h2>
+    <p>════════════════════════════</p>
+    <p>Single Player</p>
+    <p>Move: A / D | ←/→</p>
+    <p>Turbo: Space</p>
+    <p>---------------</p>
+    <p>Multiplayers</p>
+    <p>Player 1: A / D </p>
+    <p>Turbo: Space</p>
+    <p>Player 2: ←/→</p>
+    <p>Turbo: Enter</p>
+
+    <button class="menu-btn" style="background:#555; color:white; margin-top:20px" onclick="closeControl()">BACK</button>
+</div>
+
+    
+<div id="creditBox" class="hidden"
+       style="text-align:center; max-height:95vh; overflow-y:auto;">
+    <p>════════════════════</p>
+    <h2>RHYTHM AND DRIVE CREDIT</h2>
+    <p>════════════════════</p>
+ 
+
+<p>GAME CREATOR/DESIGN/PROGRAMMER</p>
+<p>Icam</p>
+    
+<p>GAMEPLAY & MECHANICS</p>
+<p>Icam</p>
+
+<p><strong>TESTING & FEEDBACK</strong></p>
+<p>
+MUHAMMAD YUSUF BIN NORHAKIMI<br>
+MUHAMMAD AQMAR DANISH BIN JOHARI<br>
+MUHAMAD ILHAM FIRDAUS BIN AHADAALI<br>
+MUHAMMAD DANISH BIN MOHD SALLEH<br>
+ILMAN FAIZ BIN AMBO SAKKA<br>
+</p>
+
+<p><strong>MUSIC & SOUND</strong></p>
+<p>
+Trade L<br>
+Gist<br>
+Jay Park<br>
+Strawlla
+</p>
+
+<p><strong>SPECIAL THANKS</strong><br>
+To everyone who supported this project.</p>
+<p>Made with passion by an indie developer.</p>
+<p>© 2026 Rhythm and Drive</p>
+<p>All Rights Reserved</p>
+<p>════════════════════</p>
+   <button class="menu-btn" style="background:#555; color:white; margin-top:20px" onclick="closeCredit()">BACK</button>
+</div>
+    
+<div id="map-select" class="hidden">
+    <h1>SELECT MODE & TERRITORY</h1>
+    <div style="margin-bottom: 20px; display: flex; gap: 10px; justify-content: center;">
+        <button id="btn-1p" class="menu-btn" style="background: #2ecc71; width: 180px;" onclick="setMode(1)">👤 1 PLAYER</button>
+        <button id="btn-2p" class="menu-btn" style="background: #3498db; width: 180px;" onclick="setMode(2)">👥 2 PLAYER</button>
+    </div>
+    <div id="map-list-area" style="display: none; gap: 20px; flex-wrap: wrap; justify-content: center;">
+        <div class="map-card" onclick="setMap('cybercity')"><h3>🌃 MELAKA CITY</h3><p>Classic Neon Night</p></div>
+        <div class="map-card" onclick="setMap('karak')"><h3>⛰️ HIGHWAY KARAK</h3><p>Dangerous Hills</p></div>
+        <div class="map-card" onclick="setMap('industrial')"><h3>🏭 PCB INDUSTRIAL</h3><p>MFS Factory Zone</p></div>
+    </div>
+    <button class="menu-btn" style="background:#555; color:white; margin-top:20px" onclick="closeMapSelect()">BACK</button>
+</div>
+
+<!-- SKRIN PEMILIHAN VERSUS -->
+<div id="versus-screen" class="hidden"  style="text-align:center; max-height:95vh; overflow-y:auto;">>
     <h1 style="color: var(--primary); letter-spacing: 5px;">CHOOSE MACHINES</h1>
     <div style="display: flex; gap: 40px; justify-content: center; align-items: flex-start; width: 90%;">
-      <div class="vs-box">
-        <h2 style="color: var(--success);">P1 SELECTION</h2>
-        <div id="vs-list-p1" class="vs-list"></div>
-      </div>
-      <div style="font-size: 3em; font-weight: 900; align-self: center; color:#444">VS</div>
-      <div class="vs-box">
-        <h2 style="color: var(--neon-blue);">P2 SELECTION</h2>
-        <div id="vs-list-p2" class="vs-list"></div>
-      </div>
+        <div class="vs-box">
+            <h2 style="color: var(--success);">P1 SELECTION</h2>
+            <div id="vs-list-p1" class="vs-list"></div>
+        </div>
+        <div style="font-size: 3em; font-weight: 900; align-self: center; color:#444">VS</div>
+        <div class="vs-box">
+            <h2 style="color: var(--neon-blue);">P2 SELECTION</h2>
+            <div id="vs-list-p2" class="vs-list"></div>
+        </div>
     </div>
     <button class="menu-btn btn-race" style="margin-top: 30px; width: 400px;" onclick="confirmVehicles()">🏁 READY TO RACE</button>
-  </div>
+</div>
 
-  <!-- Game Container -->
-  <div id="game-container" class="hidden">
-    <!-- Player 1 -->
-    <div class="player-zone">
-      <div id="game-road"></div>
-      <div class="stats-bar">
-        P1: <span id="lives-ui"></span> | 💰 <span id="cash-ui">0</span> | ⚡ <span id="level-ui">LV1</span>
-      </div>
-      <div style="width: 100%; display: flex; justify-content: center; margin-top: 20px;">
-        <div style="width: 300px; height: 15px; background: #333; border-radius: 5px; overflow: hidden; border: 1px solid #555;">
-          <div id="nitro-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3498db, #9b59b6); transition: width 0.1s;"></div>
-        </div>
+<div id="garage" class="hidden">
+    <h1>GARAGE</h1>
+    <div id="car-list" style="width:90%; max-height: 60vh; overflow-y: auto;"></div>
+    <button class="menu-btn" style="background:#555; color:white; margin-top:20px" onclick="closeGarage()">BACK</button>
+</div>
+
+<div id="leaderboard-screen" class="hidden">
+    <h1 style="color: var(--primary); font-size: 3em; font-weight: 900;">🏆 LEADERBOARD</h1>
+    <div class="lb-box" id="lb-content"></div>
+    <button class="menu-btn" style="background:#555; color:white;" onclick="closeLeaderboard()">BACK</button>
+</div>
+
+<div id="game-container" class="hidden">
+  <!-- PLAYER 1 -->
+  <div class="player-zone">
+    <div id="game-road"></div>
+    <div class="stats-bar">
+      P1: <span id="lives-ui"></span> | 💰 <span id="cash-ui">0</span> | ⚡ <span id="level-ui">LV1</span>
+    </div>
+
+    <!-- Nitro P1 -->
+    <div style="width: 100%; display: flex; justify-content: center; margin-top: 20px;">
+      <div style="width: 300px; height: 15px; background: #333; border-radius: 5px; overflow: hidden; border: 1px solid #555;">
+        <div id="nitro-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3498db, #9b59b6); transition: width 0.1s;"></div>
       </div>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- PLAYER 2 -->
+  <div class="player-zone" id="p2-zone" style="display: none;">
+    <div id="game-road-p2" style="border-left: 8px dashed #444; border-right: 8px dashed #444;"></div>
+    <div class="stats-bar" style="border-color: #3498db;">
+      P2: <span id="p2-lives-ui"></span> | 💰 <span id="p2-cash-ui">0</span>
+    </div>
+
+    <!-- Nitro P2 -->
+    <div id="nitro-bar-p2" style="width: 300px; height: 15px; background: #333; border-radius: 10px; margin-top:10px; overflow:hidden; border:1px solid var(--neon-blue);">
+      <div id="nitro-fill-p2" class="nitro-fill" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
