@@ -8,8 +8,9 @@
 </head>
 <body id="game-body">
 
-<audio id="menu-music" loop preload="auto"></audio>
-<audio id="bg-music" loop preload="auto"></audio>
+<audio id="menu-music" src="menu_theme.mp3" loop preload="auto"></audio>
+<audio id="bg-music" src="battle_theme.mp3" loop preload="auto"></audio>
+
 
 <button id="mute-btn" onclick="toggleMute()" title="Mute/Unmute">🔊</button>
 
@@ -147,7 +148,7 @@ To everyone who supported this project.</p>
 </div>
 
 <!-- SKRIN PEMILIHAN VERSUS -->
-<div id="versus-screen" class="hidden"  style="text-align:center; max-height:95vh; overflow-y:auto;">>
+<div id="versus-screen" class="hidden"  style="text-align:center; max-height:95vh; overflow-y:auto;">
     <h1 style="color: var(--primary); letter-spacing: 5px;">CHOOSE MACHINES</h1>
     <div style="display: flex; gap: 40px; justify-content: center; align-items: flex-start; width: 90%;">
         <div class="vs-box">
