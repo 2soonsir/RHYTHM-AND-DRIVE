@@ -250,6 +250,15 @@ function login() {
   catch (e) { try { userData = JSON.parse(rawData); } catch (e2) { return alert("Data korup!"); } }
   if (userData.diamond === undefined) userData.diamond = 0;
   if (userData.pass !== p) return alert("Login Gagal!");
+  
+  // FIX #6: ENSURE KANCIL ALWAYS IN userData.cars
+  if (!userData.cars || userData.cars.length === 0) {
+    userData.cars = ['kancil'];
+  }
+  if (!userData.cars.includes('kancil')) {
+    userData.cars.unshift('kancil');  // Add kancil at front
+  }
+  
   currentUser = u;
   document.getElementById("login-screen").classList.add("hidden");
   document.getElementById("main-menu").classList.remove("hidden");
