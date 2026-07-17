@@ -584,40 +584,7 @@ function gameLoop(t) {
 
   requestAnimationFrame(gameLoop);
 }
-
-
-  let speed = (CARS[selCarKey].speed + (gameLevel * 0.12));
-  if (nitroActive) { 
-    speed *= 2.8; 
-    nitroEnergy -= 0.6; 
-    if (nitroEnergy <= 0) nitroActive = false; 
-  }
-
-  // ... update kereta, UI, dll
-
-  requestAnimationFrame(gameLoop);
-}
-
-
-
-  checkLevelUp(dt);
-
-  let speed = (CARS[selCarKey].speed + (gameLevel * 0.12));
-  if (nitroActive) { speed *= 2.8; nitroEnergy -= 0.6; if (nitroEnergy <= 0) nitroActive = false; }
-
-  // P2 speed
-  let p2Speed = (CARS[p2CarKey].speed + (gameLevel * 0.12));
-  if (p2NitroActive) {
-    p2Speed *= 2.8;
-    p2NitroEnergy -= 0.6;
-    if (p2NitroEnergy <= 0) p2NitroActive = false;
-  }
-
-  moveTimer += dt;
-  if (isMultiplayer) p2MoveTimer += dt;
-
-  // LOGIK 450
-  if (moveTimer >= (450 / speed)) {
+  
     // --- P1 LOGIC ---
     obs.forEach(o => o.y++); gems.forEach(g => g.y++); items.forEach(i => i.y++);
     obs = obs.filter(o => o.y <= 5); gems = gems.filter(g => g.y <= 5); items = items.filter(i => i.y <= 5);
