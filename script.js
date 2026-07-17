@@ -224,7 +224,7 @@ function runFullIntro() {
 
 function startSystemBoot() {
   const text = document.getElementById("intro-text");
-  let lines = ["> BOOTING RND...", "> SYNCING DIAMOND_SHOP DATA...", "> READY."];
+  let lines = ["> BOOTING RND...", "> SYNCING DIAMOND_SHOP DATA...", "> READY"];
   let i = 0;
   let int = setInterval(() => {
     if (i < lines.length) { text.innerText = lines[i]; text.style.width = "100%"; i++; }
@@ -496,6 +496,14 @@ function startRace() {
     document.getElementById("p2-zone").style.display = "flex";
   } else {
     document.getElementById("p2-zone").style.display = "none";
+  }
+
+  // 🔥 Tambah interval spawn obstacle
+  if (isMultiplayer) {
+    setInterval(() => spawnObstacle("game-road"), 2000);
+    setInterval(() => spawnObstacle("game-road-p2"), 2000);
+  } else {
+    setInterval(() => spawnObstacle("game-road"), 2000);
   }
 
   lastTime = performance.now(); px = 1; py = 4;
