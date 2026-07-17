@@ -641,12 +641,10 @@ function gameLoop(t) {
       if (Math.random() < 0.02) items.push({ x: Math.floor(Math.random() * 3), y: 0 });
 
       moveTimer = 0;
-    }
-  }
+ 
 
   render();
   requestAnimationFrame(gameLoop);
-}
 
 function render() {
   const m = MAPS[currentMapKey];
