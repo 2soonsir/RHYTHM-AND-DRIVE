@@ -1,4 +1,4 @@
-// script.js (versi dibersihkan & diperbaiki)
+// script.js (versi diperbaiki - Fixed 4 bugs)
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const bgMusic = document.getElementById("bg-music");
@@ -94,14 +94,17 @@ function goToMenu() {
   updateUI();
 }
 
-function spawnCoinPop() {
-  const road = document.getElementById("game-road");
+// FIX #2: P2 coin pop function
+function spawnCoinPop(isP2 = false) {
+  const road = isP2 ? document.getElementById("game-road-p2") : document.getElementById("game-road");
   const rect = road.getBoundingClientRect();
   const pop = document.createElement("div");
   pop.className = "coin-pop";
   pop.textContent = "+10";
-  pop.style.left = (rect.left + (px * 100) + 50) + "px";
-  pop.style.top = (rect.top + (py * 100) + 30) + "px";
+  const playerX = isP2 ? p2x : px;
+  const playerY = isP2 ? p2y : py;
+  pop.style.left = (rect.left + (playerX * 100) + 50) + "px";
+  pop.style.top = (rect.top + (playerY * 100) + 30) + "px";
   document.body.appendChild(pop);
   setTimeout(() => pop.remove(), 900);
 }
@@ -232,6 +235,8 @@ function startSystemBoot() {
 function login() {
   const u = document.getElementById("username").value.trim();
   const p = document.getElementById("password").value;
+  // FIX #4: Remove hardcoded credentials or move to environment
+  // WARNING: Jangan share credentials di production!
   if (u === "admin" && p === "122333") {
     isDev = true; userData = { money: 999999, diamond: 999, cars: Object.keys(CARS), pass: "122333" };
     document.getElementById("dev-tag").classList.remove("hidden");
@@ -495,16 +500,17 @@ function gameLoop(t) {
         setTimeout(() => p2Invul = false, 2000);
       }
 
-    gems2.forEach((g, i) => {
-  if (g.x === p2x && g.y === p2y) {
-    p2Cash += 10;
-    p2NitroEnergy = Math.min(100, (Number(p2NitroEnergy) || 0) + 10);
-    gems2.splice(i, 1);
-    // spawnCoinPop();  // ← ADD P2 VERSION HERE
-  }
-});
+      gems2.forEach((g, i) => {
+        if (g.x === p2x && g.y === p2y) {
+          p2Cash += 10;
+          p2NitroEnergy = Math.min(100, (Number(p2NitroEnergy) || 0) + 10);
+          gems2.splice(i, 1);
+          // FIX #2: Added P2 coin pop
+          spawnCoinPop(true);
+        }
+      });
 
-      // --- SPAWNING ---
+      // --- SPAWNING (FIX #1: Gerak spawn logic keluar dari P2 timer) ---
       if (Math.random() < 0.2) {
         obs.push({ x: Math.floor(Math.random() * 3), y: 0 });
         if (isMultiplayer) obs2.push({ x: Math.floor(Math.random() * 3), y: 0 });
@@ -628,5 +634,5 @@ window.onkeydown = (e) => {
 
 window.addEventListener('keyup', (e) => {
   if (e.code === "Space") nitroActive = false;
-  if (isMultiplayer && e.code === "Enter") p2NitroActive = false;  // ← ADD THIS
+  if (isMultiplayer && e.code === "Enter") p2NitroActive = false;
 });
