@@ -32,3 +32,49 @@
     <div class="go-score">💰 <span id="go-cash">0</span></div>
     <div class="go-sub">DIAMOND KAU: 💎 <span id="go-diamond">0</span></div>
     <button class="menu-btn btn-special" id="go-continue-btn" onclick="continueGame()">💎 CONTINUE (1 DIAMOND)</button>
+    <button class="menu-btn" style="background:#555; color:white;" onclick="goToMenu()">↩ BALIK MENU</button>
+  </div>
+
+  <!-- Intro Screen -->
+  <div id="intro-screen" onclick="runFullIntro()">
+    <div id="studio-logo" style="color:red; font-size:2.5em; font-weight:bold; letter-spacing:10px; opacity:0; transition:2s;">GAGAKZ STUDIO</div>
+    <div id="intro-text" style="color:var(--primary); font-size:1.5em; margin-top:20px; white-space: nowrap; overflow: hidden; width: 0; font-weight: bold;"></div>
+    <div id="press-start" style="margin-top:80px; color:#FFFAF0; letter-spacing:5px; font-size:1em; animation: blink 1.5s infinite;">[ CLICK TO START YOUR ENGINE ]</div>
+  </div>
+
+  <!-- Versus Screen -->
+  <div id="versus-screen" class="hidden" style="text-align:center; max-height:95vh; overflow-y:auto;">
+    <h1 style="color: var(--primary); letter-spacing: 5px;">CHOOSE MACHINES</h1>
+    <div style="display: flex; gap: 40px; justify-content: center; align-items: flex-start; width: 90%;">
+      <div class="vs-box">
+        <h2 style="color: var(--success);">P1 SELECTION</h2>
+        <div id="vs-list-p1" class="vs-list"></div>
+      </div>
+      <div style="font-size: 3em; font-weight: 900; align-self: center; color:#444">VS</div>
+      <div class="vs-box">
+        <h2 style="color: var(--neon-blue);">P2 SELECTION</h2>
+        <div id="vs-list-p2" class="vs-list"></div>
+      </div>
+    </div>
+    <button class="menu-btn btn-race" style="margin-top: 30px; width: 400px;" onclick="confirmVehicles()">🏁 READY TO RACE</button>
+  </div>
+
+  <!-- Game Container -->
+  <div id="game-container" class="hidden">
+    <!-- Player 1 -->
+    <div class="player-zone">
+      <div id="game-road"></div>
+      <div class="stats-bar">
+        P1: <span id="lives-ui"></span> | 💰 <span id="cash-ui">0</span> | ⚡ <span id="level-ui">LV1</span>
+      </div>
+      <div style="width: 100%; display: flex; justify-content: center; margin-top: 20px;">
+        <div style="width: 300px; height: 15px; background: #333; border-radius: 5px; overflow: hidden; border: 1px solid #555;">
+          <div id="nitro-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3498db, #9b59b6); transition: width 0.1s;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
