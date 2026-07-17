@@ -412,50 +412,47 @@ function executeSetMap(key) {
 
 function openVersusSelection() {
   document.getElementById("versus-screen").classList.remove("hidden");
-  renderVSList('p1'); renderVSList('p2');
+  renderVSList('p1'); 
+  renderVSList('p2');
 }
 
 function closeVersusscreen() {
   document.getElementById("versus-screen").classList.add("hidden");
   document.getElementById("main-menu").classList.remove("hidden");
 }
-// FIX #5: MULTIPLAYER VEHICLE SELECTION - Show ALL cars in CORRECT ORDER
+
 function renderVSList(player) {
   const container = document.getElementById(`vs-list-${player}`);
   container.innerHTML = "";
   let selectedElement = null;
-  
-  // Define CORRECT ORDER - KANCIL FIRST!
+
   const carOrder = ['kancil', 'myvi', 'satria', 'wira', 'saga', 'perdana', 'hilux', 'kancil_r'];
-  
-  // Loop in order
+
   carOrder.forEach(key => {
     const owned = (userData.cars || []).includes(key);
     const isSel = (player === 'p1' ? selCarKey === key : p2CarKey === key);
-    
+
     const div = document.createElement("div");
     div.className = "vs-car-item";
-    
+
     if (isSel) {
       div.classList.add('vs-selected');
       div.style.border = "3px solid var(--primary)";
       div.style.boxShadow = "0 0 20px var(--primary)";
       selectedElement = div;
     }
-    
-    // Jika tak owned, set opacity jadi faded
+
     if (!owned) {
       div.style.opacity = "0.4";
-      div.style.pointerEvents = "none"; // Prevent click
+      div.style.pointerEvents = "none";
     }
-    
+
     div.innerHTML = `
       <div style="transform:scale(0.5)">${getCarHTML(key)}</div>
       <p style="font-size:10px">${key.toUpperCase()}</p>
       ${!owned ? `<p style="font-size:8px; color:#f1c40f;">🔒</p>` : ''}
     `;
-    
-    // Only clickable if owned
+
     if (owned) {
       div.style.cursor = "pointer";
       div.onclick = () => { 
@@ -464,11 +461,10 @@ function renderVSList(player) {
         renderVSList(player); 
       };
     }
-    
+
     container.appendChild(div);
   });
-  
-  // Auto-scroll ke selected car
+
   if (selectedElement) {
     setTimeout(() => {
       selectedElement.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
@@ -498,7 +494,6 @@ function startRace() {
     document.getElementById("p2-zone").style.display = "none";
   }
 
-  // 🔥 Tambah interval spawn obstacle
   if (isMultiplayer) {
     setInterval(() => spawnObstacle("game-road"), 2000);
     setInterval(() => spawnObstacle("game-road-p2"), 2000);
@@ -513,9 +508,68 @@ function startRace() {
   requestAnimationFrame(gameLoop);
 }
 
+function spawnObstacle(roadId) {
+  const road = document.getElementById(roadId);
+  if (!road) return;
+
+  const obstacle = document.createElement("div");
+  obstacle.className = "obstacle";
+  obstacle.style.width = "40px";
+  obstacle.style.height = "40px";
+  obstacle.style.background = "red";
+  obstacle.style.position = "absolute";
+  obstacle.style.top = "0px";
+  obstacle.style.left = Math.floor(Math.random() * (road.offsetWidth - 40)) + "px";
+
+  road.appendChild(obstacle);
+
+  let pos = 0;
+  function move() {
+    pos += 5;
+    obstacle.style.top = pos + "px";
+
+    const car = document.querySelector("#" + roadId + " .car-visual");
+    if (car) {
+      const carRect = car.getBoundingClientRect();
+      const obsRect = obstacle.getBoundingClientRect();
+      if (
+        carRect.left < obsRect.right &&
+        carRect.right > obsRect.left &&
+        carRect.top < obsRect.bottom &&
+        carRect.bottom > obsRect.top
+      ) {
+        console.log("Collision!");
+      }
+    }
+
+    if (pos < road.offsetHeight - 40) {
+      requestAnimationFrame(move);
+    } else {
+      road.removeChild(obstacle);
+    }
+  }
+  requestAnimationFrame(move);
+}
+
 function gameLoop(t) {
   if (!running || isPaused) return;
   let dt = t - lastTime; lastTime = t;
+
+  checkLevelUp(dt);
+
+  let speed = (CARS[selCarKey].speed + (gameLevel * 0.12));
+  if (nitroActive) { 
+    speed *= 2.8; 
+    nitroEnergy -= 0.6; 
+    if (nitroEnergy <= 0) nitroActive = false; 
+  }
+
+  // ... update kereta, UI, dll
+
+  requestAnimationFrame(gameLoop);
+}
+
+
 
   checkLevelUp(dt);
 
