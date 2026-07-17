@@ -69,7 +69,7 @@ input { padding: 15px; margin: 10px 0; width: 90%; border-radius: 8px; border: 1
 /* --- REKABENTUK KERETA (SOURCE 5 - SEMUA DETAIL ASAL) --- */
 .car-visual { position: relative; display: flex; flex-direction: column; align-items: center; transition: 0.1s; border-radius: 4px; }
 .v-kancil { width: 42px; height: 65px; background: #f1c40f; border: 2px solid #b8860b; overflow: hidden; }
-.v-kancil::after { content:""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 6px; height: 100%; background: rgba(0,0,0,0.7); box-shadow: 10px 0 0 rgba(0,0,0,0.7), -10px 0 0 rgba(0,0,0,0.7); }
+.v-kancil::after { content:""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 6px; height: 100%; background: rgba(0,0,0,0.7); box-shadow: 10px 0 0 rgba(0,0,0,0.7), -10p[...] }
 .v-kancil-roof { position: absolute; top: 15px; width: 32px; height: 35px; background: #222; border-radius: 3px; border: 1px solid #111; z-index: 1;}
 .v-myvi { width: 48px; height: 75px; background: #a0a0a0; border: 2px solid #666; }
 .v-myvi-roof { position: absolute; top: 18px; width: 36px; height: 40px; background: #888; border-radius: 5px; border: 1px solid #555; z-index: 1;}
@@ -84,7 +84,7 @@ input { padding: 15px; margin: 10px 0; width: 90%; border-radius: 8px; border: 1
 .v-saga-roof { position: absolute; top: 22px; width: 42px; height: 45px; background: #34495e; border-radius: 2px; z-index: 1; border: 1px solid #2c3e50; }
 .v-hilux { width: 55px; height: 95px; background: #2a2a2a; border: 2px solid #111; border-radius: 2px;}
 .v-hilux-roof { position: absolute; top: 20px; width: 39px; height: 35px; background: #444; border-radius: 3px; border: 1px solid #222; z-index: 1;}
-.v-hilux-rollbar { position: absolute; top: 55px; width: 39px; height: 25px; background: transparent; border-left: 3px solid #666; border-right: 3px solid #666; border-top: 3px solid #666; z-index: 0;}
+.v-hilux-rollbar { position: absolute; top: 55px; width: 39px; height: 25px; background: transparent; border-left: 3px solid #666; border-right: 3px solid #666; border-top: 3px solid #666; z-index[...] }
 .headlights { position: absolute; top: 1px; width: 100%; display: flex; justify-content: space-around; z-index: 2;}
 .light { width: 10px; height: 5px; background: #fff; border-radius: 50%; box-shadow: 0 0 12px #fff; }
 
@@ -101,7 +101,19 @@ input { padding: 15px; margin: 10px 0; width: 90%; border-radius: 8px; border: 1
 /* FIX: Kurangkan margin dan letak scale supaya muat skrin */
 .vs-container { display: flex; gap: 40px; margin-bottom: 10px; transform: scale(0.9); }
 .vs-player-box { background: #151515; border: 2px solid #333; padding: 20px; border-radius: 20px; width: 450px; overflow: hidden; }
-.vs-car-list { display: flex; flex-direction: row; gap: 15px; overflow-x: auto; overflow-y: hidden; padding: 15px; background: #0a0a0a; border-radius: 10px; }
+
+/* FIX #7: Change to GRID layout untuk multiplayer vehicle selection */
+.vs-car-list { 
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 15px; 
+  overflow-y: auto;
+  max-height: 320px;
+  padding: 15px; 
+  background: #0a0a0a; 
+  border-radius: 10px;
+}
+
 .vs-car-item { background: #222; border: 2px solid #444; padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; min-width: 100px; }
 .vs-car-item:hover { border-color: var(--primary); background: #333; transform: scale(1.05); }
 
