@@ -4,12 +4,18 @@
     --bg: #0a0a0a; --road: #1a1a1a; --neon-blue: #3498db; --diamond: #9b59b6;
 }
 
-body { 
-    background: var(--bg); color: white; 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    text-align: center; margin: 0; overflow: hidden; user-select: none; 
-    transition: background 2s;
+body {
+  background: var(--bg);
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+  margin: 0;
+  overflow-x: hidden;   /* kekalkan horizontal hidden */
+  overflow-y: auto;     /* benarkan scroll menegak */
+  user-select: none;
+  transition: background 2s;
 }
+
 
 /* --- BACKGROUNDS & ANIMATIONS --- */
 .grid-bg { 
@@ -50,11 +56,22 @@ body {
     justify-content: center; align-items: center; z-index: 10;
     background: var(--bg); overflow: hidden;
 }
-
 #versus-screen {
-  overflow-y: auto;   /* benarkan scroll menegak */
-  overflow-x: hidden; /* kekalkan horizontal */
+  width: 100%;
+  min-height: 100vh;    /* sekurang-kurangnya penuh viewport */
+  position: absolute;
+  top: 0; left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  z-index: 10;
+  background: var(--bg);
+  overflow-y: auto;     /* benarkan scroll menegak */
+  overflow-x: hidden;   /* kekalkan horizontal */
+  padding-top: 20px;    /* ruang atas supaya kereta pertama nampak */
 }
+
 
 .title-card { 
     font-size: 5em; font-weight: 900; color: var(--primary); 
