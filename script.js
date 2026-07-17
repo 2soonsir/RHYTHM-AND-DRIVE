@@ -1,4 +1,4 @@
-// script.js (CLEANED - Fixed structural bugs, logic unchanged)
+// script.js (WITH LEVEL-BASED DIFFICULTY SCALING)
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const bgMusic = document.getElementById("bg-music");
 const menuMusic = document.getElementById("menu-music");
@@ -35,13 +35,23 @@ let p2NitroActive = false;
 let p2NitroEnergy = 0;
 let obs2 = [], gems2 = [];
 let p2MoveTimer = 0;
-let p2Speed = 1.0; // FIX: Added missing variable
+let p2Speed = 1.0;
 let levelTimer = 0;
 const LEVEL_INTERVAL = 30000;
 
 function stopAllMusic() {
   menuMusic.pause(); menuMusic.currentTime = 0;
   bgMusic.pause(); bgMusic.currentTime = 0;
+}
+
+// NEW: Calculate difficulty multiplier based on level
+function getDifficultyMultiplier() {
+  return 1 + ((gameLevel - 1) * 0.15); // +15% speed per level
+}
+
+// NEW: Calculate spawn chance based on level
+function getSpawnChance(baseChance) {
+  return baseChance * (1 + ((gameLevel - 1) * 0.1)); // +10% spawn rate per level
 }
 
 function checkLevelUp(dt) {
@@ -462,12 +472,12 @@ function startRace() {
   nitroActive = false; nitroEnergy = 0;
   curLives = CARS[selCarKey].hp;
   sessionCash = 0; obs = []; gems = []; items = [];
-  moveTimer = 0; // FIX: Reset moveTimer
+  moveTimer = 0;
   
   if (isMultiplayer) {
     p2Lives = CARS[p2CarKey].hp; p2x = 1; p2Cash = 0; obs2 = []; gems2 = [];
     p2MoveTimer = 0;
-    p2Speed = CARS[p2CarKey].speed; // FIX: Set p2Speed
+    p2Speed = CARS[p2CarKey].speed;
     p2NitroActive = false;
     p2NitroEnergy = 0;
     document.getElementById("p2-zone").style.display = "flex";
@@ -482,32 +492,37 @@ function startRace() {
   requestAnimationFrame(gameLoop);
 }
 
-// FIX: Complete gameLoop function with all logic inside
+// UPDATED: gameLoop with difficulty scaling
 function gameLoop(t) {
   if (!running || isPaused) return;
   let dt = t - lastTime; lastTime = t;
   checkLevelUp(dt);
   
-  // FIX: Increment timers
   moveTimer += dt;
   if (isMultiplayer) p2MoveTimer += dt;
   
-  // --- SPAWNING LOGIC (FIX: Moved inside gameLoop) ---
-  if (Math.random() < 0.02) {
+  // NEW: Apply difficulty multiplier to spawn chances
+  const difficultyMultiplier = getDifficultyMultiplier();
+  const obsSpawnChance = getSpawnChance(0.02);
+  const gemSpawnChance = getSpawnChance(0.01);
+  const itemSpawnChance = 0.005; // Keep items constant
+  
+  // --- SPAWNING LOGIC ---
+  if (Math.random() < obsSpawnChance) {
     obs.push({ x: Math.floor(Math.random() * 3), y: 0 });
     if (isMultiplayer) obs2.push({ x: Math.floor(Math.random() * 3), y: 0 });
   }
-  if (Math.random() < 0.01) {
+  if (Math.random() < gemSpawnChance) {
     gems.push({ x: Math.floor(Math.random() * 3), y: 0 });
     if (isMultiplayer) {
       const newGem2 = { x: Math.floor(Math.random() * 3), y: 0 };
       gems2.push(newGem2);
     }
   }
-  if (Math.random() < 0.005) items.push({ x: Math.floor(Math.random() * 3), y: 0 });
+  if (Math.random() < itemSpawnChance) items.push({ x: Math.floor(Math.random() * 3), y: 0 });
   
-  // --- P1 LOGIC ---
-  const p1Speed = CARS[selCarKey].speed;
+  // --- P1 LOGIC with difficulty scaling ---
+  const p1Speed = CARS[selCarKey].speed * difficultyMultiplier; // NEW: Apply multiplier
   if (moveTimer >= (450 / p1Speed)) {
     moveTimer = 0;
     obs.forEach(o => o.y++);
@@ -543,31 +558,34 @@ function gameLoop(t) {
     });
   }
   
-  // --- P2 LOGIC ---
-  if (isMultiplayer && p2MoveTimer >= (450 / p2Speed)) {
-    p2MoveTimer = 0;
-    obs2.forEach(o => o.y++);
-    gems2.forEach(g => g.y++);
-    obs2 = obs2.filter(o => o.y <= 5);
-    gems2 = gems2.filter(g => g.y <= 5);
-    
-    if (obs2.find(o => o.x === p2x && o.y === p2y) && !p2Invul) {
-      p2Lives--;
-      p2Invul = true;
-      document.body.classList.add("shake-body");
-      setTimeout(() => document.body.classList.remove("shake-body"), 300);
-      if (p2Lives <= 0) return gameOver();
-      setTimeout(() => p2Invul = false, 2000);
-    }
-    
-    gems2.forEach((g, i) => {
-      if (g.x === p2x && g.y === p2y) {
-        p2Cash += 10;
-        p2NitroEnergy = Math.min(100, (Number(p2NitroEnergy) || 0) + 10);
-        gems2.splice(i, 1);
-        spawnCoinPop(true);
+  // --- P2 LOGIC with difficulty scaling ---
+  if (isMultiplayer) {
+    const p2SpeedScaled = p2Speed * difficultyMultiplier; // NEW: Apply multiplier
+    if (p2MoveTimer >= (450 / p2SpeedScaled)) {
+      p2MoveTimer = 0;
+      obs2.forEach(o => o.y++);
+      gems2.forEach(g => g.y++);
+      obs2 = obs2.filter(o => o.y <= 5);
+      gems2 = gems2.filter(g => g.y <= 5);
+      
+      if (obs2.find(o => o.x === p2x && o.y === p2y) && !p2Invul) {
+        p2Lives--;
+        p2Invul = true;
+        document.body.classList.add("shake-body");
+        setTimeout(() => document.body.classList.remove("shake-body"), 300);
+        if (p2Lives <= 0) return gameOver();
+        setTimeout(() => p2Invul = false, 2000);
       }
-    });
+      
+      gems2.forEach((g, i) => {
+        if (g.x === p2x && g.y === p2y) {
+          p2Cash += 10;
+          p2NitroEnergy = Math.min(100, (Number(p2NitroEnergy) || 0) + 10);
+          gems2.splice(i, 1);
+          spawnCoinPop(true);
+        }
+      });
+    }
   }
   
   render();
