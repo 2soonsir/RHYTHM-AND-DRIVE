@@ -47,12 +47,12 @@ function stopAllMusic() {
 
 // Calculate difficulty multiplier based on level
 function getDifficultyMultiplier() {
-  return 1 + ((gameLevel - 1) * 0.15); // +15% speed per level
+  return 1 + ((gameLevel - 1) * 0.07); // +7% speed per level
 }
 
 // Calculate spawn chance based on level
 function getSpawnChance(baseChance) {
-  return baseChance * (1 + ((gameLevel - 1) * 0.1)); // +10% spawn rate per level
+  return baseChance * (1 + ((gameLevel - 1) * 0.03)); // +3% spawn rate per level
 }
 
 function checkLevelUp(dt) {
@@ -67,7 +67,7 @@ function checkLevelUp(dt) {
 
 function showLevelUpBanner() {
   const banner = document.getElementById("levelup-banner");
-  banner.textContent = "⚡ LEVEL " + gameLevel + "!";
+  banner.textContent = " LEVEL " + gameLevel + "⚡!";
   banner.classList.remove("show");
   void banner.offsetWidth;
   banner.classList.add("show");
@@ -124,6 +124,18 @@ function toggleMute() {
   bgMusic.muted = isMuted;
   menuMusic.muted = isMuted;
   document.getElementById("mute-btn").textContent = isMuted ? "🔇" : "🔊";
+}
+
+function toggleInfo(){
+  const popup = document.getElementById('info-popup');
+  popup.classList.remove('hidden'); // buang class hidden
+  popup.classList.add('show');      // tambah class show
+}
+
+function closeInfo(){
+  const popup = document.getElementById('info-popup');
+  popup.classList.remove('show');   // buang class show
+  popup.classList.add('hidden');    // tambah balik hidden
 }
 
 let isPaused = false;
